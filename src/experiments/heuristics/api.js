@@ -5,7 +5,9 @@ let Cu3 = Components.utils;
 Cu3.import("resource://gre/modules/Services.jsm");
 
 function log() {
-  if (false) {
+  // eslint-disable-next-line no-constant-condition
+  if (true) {
+    // eslint-disable-next-line no-console
     console.log(...arguments);
   }
 }
@@ -99,7 +101,7 @@ const heuristicsManager = {
 
 
 var heuristics = class heuristics extends ExtensionAPI {
-  getAPI(context) {
+  getAPI() {
     return {
       experiments: {
         heuristics: {

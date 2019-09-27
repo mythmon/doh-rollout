@@ -2,7 +2,9 @@
 /* global browser, runHeuristics */
 
 function log() {
-  if (false) {
+  // eslint-disable-next-line no-constant-condition
+  if (true) {
+    // eslint-disable-next-line no-console
     console.log(...arguments);
   }
 }
@@ -45,7 +47,7 @@ const stateManager = {
   },
 
   async shouldRunHeuristics() {
-    // Check if heursitics has been disabled from rememberDisableHeuristics()
+    // Check if heuristics has been disabled from rememberDisableHeuristics()
     let disableHeuristics = await rollout.getSetting("doh-rollout.disable-heuristics", false);
     if (disableHeuristics) {
       // Do not modify DoH for this user.
@@ -89,7 +91,6 @@ const stateManager = {
 
   async shouldShowDoorhanger() {
     let doorhangerShown = await rollout.getSetting("doh-rollout.doorhanger-shown", false);
-    let doorhangerPingSent = await rollout.getSetting("doh-rollout.doorhanger-ping-sent", false);
     log("Should show doorhanger:", !doorhangerShown);
     return !doorhangerShown;
   },
@@ -141,7 +142,7 @@ const rollout = {
     await stateManager.rememberDoorhangerShown();
   },
 
-  async netChangeListener(reason) {
+  async netChangeListener() {
     // Possible race condition between multiple notifications?
     let curTime = new Date().getTime() / 1000;
     let timePassed = curTime - notificationTime;
@@ -202,7 +203,7 @@ const rollout = {
       await browser.experiments.preferences.prefHasUserValue(
         TRR_MODE_PREF)
     ) {
-      // TODO: Add telemtery ping for user who already has pref on DoH
+      // TODO: Add telemetry ping for user who already has pref on DoH
       await stateManager.rememberDisableHeuristics();
       return;
     }
@@ -231,7 +232,7 @@ const rollout = {
     }
 
     // Listen for network change events to run heuristics again
-    browser.experiments.netChange.onConnectionChanged.addListener(async (reason) => {
+    browser.experiments.netChange.onConnectionChanged.addListener(async () => {
       log("onConnectionChanged");
       // Only run the heuristics if user hasn't explicitly enabled/disabled DoH
       let shouldRunHeuristics = await stateManager.shouldRunHeuristics();
